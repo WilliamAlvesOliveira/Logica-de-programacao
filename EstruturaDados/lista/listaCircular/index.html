@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista Circular</title>
+    <style>
+        html{
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+        }
+
+        #options{
+            height: 300px;
+        }
+        
+        #display{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 35px;
+        }
+
+        #historico{
+            gap: 10px;
+        }
+
+        #historico > span{
+            display: inline-block;
+            font-size: 22px;
+            width: 100px;
+            border-radius: 1000px;
+            border: 1px solid black;
+        }
+
+        .current{
+            background-color: blue;
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Exercício Histórico de navegação</h1>
+
+    <div id="options">
+        <button>branco</button> <button>vermelho</button>
+        <button>preto</button> <button>marron</button>
+        <button>azul</button> <button>laranja</button>
+        <button>amarelo</button> <button>rosa</button>
+        <button>verde</button> <button>roxo</button>
+    </div>
+
+    <hr>
+
+    
+    <div id="display">
+        <button id="goBack">voltar</button>
+        <div id="historico">
+            
+        </div>
+        <button id="goForward">Ir</button>
+    </div>
+
+    <script>
+        function setColor(event){
+            meuhistorico.set(event.target.innerText)
+            historico.innerHTML = meuhistorico.get().map((cor) => `<span>${cor}</span>`).join('')
+            historicoEl = historico.querySelectorAll('span')
+            historicoEl[meuhistorico.getCurrentIndex()-1].classList.add('current')
+            console.log(meuhistorico.getCurrentIndex())
+        }
+
+
+        const historico = document.querySelector('#historico')
+        const options = document.querySelector('#options')
+        options.addEventListener('click', setColor)
+        const goForward = document.querySelector('#goForward')
+        const goBack = document.querySelector('#goBack')
+        let historicoEl = historico.querySelectorAll('span')
+
+        class Historic{
+            #historic
+            #currentIndex
+
+            constructor(limit){
+                this.limit = limit || null
+                this.#historic = []
+                this.#currentIndex = 0
+            }
+
+            get(){
+                return this.#historic
+            }
+
+            getCurrentIndex(){
+                return this.#currentIndex
+            }
+
+            set(color){
+                if(!this.limitIsFull()  || this.#historic.length > this.#currentIndex){
+                    this.#historic[this.#currentIndex] = color
+                    this.#currentIndex++
+                    this.#historic.length = this.#currentIndex
+                }else{
+                    this.#historic.shift()
+                    this.#historic.push(color)
+                    console.log(this.#currentIndex)
+                    this.#historic.length = this.#currentIndex
+                }
+            }
+
+            nextIndex(){
+                if(this.#currentIndex < this.#historic.length){
+                    this.#currentIndex++
+                    historico.innerHTML = meuhistorico.get().map((cor) => `<span>${cor}</span>`).join('')
+                    historicoEl = historico.querySelectorAll('span')
+                    historicoEl[meuhistorico.getCurrentIndex()-1].classList.add('current')
+                }
+            }
+
+            currentIndexBackward(){
+                if(this.#currentIndex > 1){
+                    this.#currentIndex--
+                    historico.innerHTML = meuhistorico.get().map((cor) => `<span>${cor}</span>`).join('')
+                    historicoEl = historico.querySelectorAll('span')
+                    historicoEl[meuhistorico.getCurrentIndex()-1].classList.add('current')
+                }
+            }
+
+            
+
+            limitIsFull(){
+                if(this.limit)return this.#historic.length === this.limit
+                
+                return false
+            }
+        }
+
+        const limitInput = prompt('digite um limite para o histórico')
+        const limit = Number(limitInput)
+        if(isNaN(limit)) console.log('Erro: limite inválido')
+    
+        const meuhistorico = new Historic(limit)
+
+        goForward.addEventListener('click', () => meuhistorico.nextIndex())
+        goBack.addEventListener('click', () => meuhistorico.currentIndexBackward())
+    </script>
+</body>
+</html>
