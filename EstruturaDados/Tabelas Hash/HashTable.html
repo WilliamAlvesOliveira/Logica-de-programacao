@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista Encadeada + Explicação de Tabelas Hash</title>
+    <style>
+        p{
+            font-size: 22px;
+        }
+
+        li{
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Listas Encadeadas (Linked Lists) e Tabelas Hash</h1>
+
+    <p>
+        <strong>Tabelas Hash</strong> são estruturas de dados usadas para armazenar pares
+        <em>chave → valor</em> de forma eficiente. Usam uma <strong>função hash</strong> para
+        converter uma chave (por exemplo, uma string) em um índice de um array interno,
+        permitindo acesso rápido aos dados.
+    </p>
+
+    <p>
+        <strong>Para que servem:</strong> São amplamente usadas para criar dicionários,
+        índices de banco de dados, caches, contadores de frequência, entre outros.
+        O grande benefício é o tempo médio de busca, inserção e remoção próximo de
+        <code>O(1)</code>.
+    </p>
+
+    <p>
+        <strong>Colisões:</strong> Quando duas chaves diferentes geram o mesmo índice, temos
+        uma colisão. Isso é inevitável quando o número de chaves é maior que o número de posições
+        disponíveis ou quando a função hash não é perfeitamente uniforme.
+    </p>
+
+    <p>
+        <strong>Métodos para tratar colisões:</strong>
+        <ul>
+            <li><strong>Encadeamento (Chaining):</strong> Cada posição da tabela guarda uma lista
+                de pares chave-valor. Se houver colisão, adiciona-se o novo par nessa lista.</li>
+            <li><strong>Endereçamento Aberto:</strong> Em caso de colisão, procura-se outro espaço
+                livre no array usando sondagem linear, quadrática ou hashing duplo.</li>
+        </ul>
+    </p>
+
+    <p>
+        <strong>Load Factor:</strong> É a relação entre o número de elementos e o número de posições
+        na tabela. Um load factor muito alto aumenta as colisões e diminui a performance.
+        Em muitos casos, quando o load factor ultrapassa um certo limite (ex.: 0,75), a tabela
+        é redimensionada.
+    </p>
+
+    <p>
+        <strong>Complexidade esperada:</strong>
+        <ul>
+            <li>Busca: O(1) em média, O(n) no pior caso (muitas colisões)</li>
+            <li>Inserção: O(1) em média</li>
+            <li>Remoção: O(1) em média</li>
+        </ul>
+    </p>
+
+    <script>
+        // Classe que representa um nó da lista ligada usada para tratar colisões
+        class HashNode {
+            constructor(key, value) {
+                this.key = key        // Chave única associada ao valor
+                this.value = value    // Valor armazenado
+                this.next = null      // Ponteiro para o próximo nó (usado em colisões)
+            }
+        }
+
+        // Lista ligada para armazenar elementos que caem na mesma posição (colisão)
+        class LinkedList {
+            #size
+            constructor() {
+                this.head = null      // Primeiro nó da lista
+                this.tail = null      // Último nó da lista
+                this.#size = 0        // Quantidade de nós na lista
+            }
+
+            /**
+             * Adiciona um novo nó à lista
+             * @param key - chave única
+             * @param value - valor a ser armazenado
+             * @param replace - se for true, substitui o valor caso a chave já exista
+             */
+            append(key, value, replace = false) {
+                let current = this.head
+
+                // Percorre a lista para verificar se a chave já existe
+                while (current) {
+                    if (current.key === key) {
+                        if (replace) {
+                            current.value = value // Atualiza valor
+                        } else {
+                            throw Error("Chave existente, mude a chave ou passe true como parâmetro")
+                        }
+                        return false // Não houve incremento de tamanho
+                    }
+                    current = current.next
+                }
+
+                // Cria um novo nó
+                const newHashNode = new HashNode(key, value)
+
+                // Caso a lista esteja vazia
+                if (this.head === null) {
+                    this.head = newHashNode
+                    this.tail = newHashNode
+                } else {
+                    // Adiciona no final da lista
+                    const last = this.tail
+                    last.next = newHashNode
+                    this.tail = newHashNode
+                }
+
+                this.#size++ // Incrementa o tamanho da lista
+                return true
+            }
+
+            /**
+             * Busca um valor na lista baseado na chave
+             */
+            getByKey(key) {
+                let current = this.head
+                while (current) {
+                    if (current.key === key) return current.value
+                    current = current.next
+                }
+                return undefined // Se não encontrar
+            }
+
+            /**
+             * Remove um elemento pelo valor da chave
+             */
+            remove(key) {
+                let current = this.head
+                let prev = null
+
+                while (current) {
+                    if (current.key === key) {
+                        if (prev) {
+                            prev.next = current.next
+                            if (current === this.tail) {
+                                this.tail = prev // Atualiza o último nó
+                            }
+                            current.next = null
+                        } else {
+                            // Removendo o primeiro nó
+                            this.head = current.next
+                            if (current === this.tail) {
+                                this.tail = null
+                            }
+                            current.next = null
+                        }
+                        this.#size-- // Decrementa tamanho
+                        return true
+                    }
+                    prev = current
+                    current = current.next
+                }
+                return false // Se não encontrar a chave
+            }
+
+            // Verifica se a lista está vazia
+            isEmpty() {
+                return this.head === null
+            }
+
+            // Retorna o tamanho da lista
+            get() {
+                return this.#size
+            }
+
+            // Imprime a lista no console (debug)
+            print() {
+                let current = this.head
+                let result = ''
+                while (current) {
+                    result += current.value + ' -> '
+                    current = current.next
+                }
+                console.log(result + ' size= ' + this.#size)
+            }
+        }
+
+        // Classe principal da tabela hash
+        class HashTable {
+            #size
+            constructor(maxsize) {
+                this.#size = 0       // Quantidade de elementos na tabela
+                this.table = []      // Array que armazenará as listas ligadas
+                this.max = maxsize   // Tamanho máximo da tabela (número de índices possíveis)
+            }
+
+            /**
+             * Função hash
+             * Converte a chave em um índice usando código ASCII dos caracteres
+             */
+            hash(key) {
+                let hashValue = 0
+                for (let i = 0; i < key.length; i++) {
+                    hashValue += key.charCodeAt(i)
+                }
+                return hashValue % this.max // Garante que o índice esteja dentro do tamanho máximo
+            }
+
+            /**
+             * Insere um elemento na tabela
+             * @param replace - se true, substitui valor caso a chave já exista
+             */
+            insert(key, value, replace) {
+                const index = this.hash(key)
+
+                // Se não existe lista neste índice, cria uma
+                if (this.table[index] === undefined) {
+                    this.table[index] = new LinkedList()
+                }
+
+                // Insere na lista ligada do índice correspondente
+                const result = this.table[index].append(key, value, replace)
+                if (result) this.#size++
+            }
+
+            /**
+             * Recupera um valor pela chave
+             */
+            get(key) {
+                const index = this.hash(key)
+                if (this.table[index] !== undefined) {
+                    return this.table[index].getByKey(key)
+                }
+                return undefined
+            }
+
+            /**
+             * Remove um elemento pela chave
+             */
+            remove(key) {
+                const index = this.hash(key)
+                if (this.table[index] !== undefined) {
+                    const result = this.table[index].remove(key)
+                    if (result) {
+                        this.#size--
+                        // Remove a lista do índice se ela ficar vazia
+                        if (this.table[index].isEmpty()) {
+                            this.table[index] = undefined
+                        }
+                    }
+                    return result
+                }
+                return false
+            }
+        }
+
+        // ===========================
+        // Testando a tabela hash
+        // ===========================
+        const table = new HashTable(97) // Números primos funcionam melhor para distribuir chaves
+
+        // Inserindo elemento
+        table.insert('user@server.com', 'user1')
+        console.log(table.get('user@server.com')) // Esperado: user1
+
+        // Atualizando valor da mesma chave (com replace = true)
+        table.insert('user@server.com', 'user10', true)
+        console.log(table.get('user@server.com')) // Esperado: user10
+
+        // Removendo chave existente
+        console.log(table.remove('user@server.com')) // Esperado: true
+
+        // Tentando remover chave inexistente
+        console.log(table.remove('asb@server.com')) // Esperado: false
+
+        // Buscando chave inexistente
+        console.log(table.get('asb@server.com')) // Esperado: undefined
+
+    </script>
+
+</body>
+</html>
