@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Árvores</title>
+</head>
+<body>
+    <h1>Árvores</h1>
+
+    <p>Uma <strong>árvore</strong> é uma estrutura de dados fundamental em ciência da computação, usada para organizar informações de forma hierárquica. Diferente de listas ou arrays, em uma árvore cada elemento (chamado de <em>nó</em>) pode ter múltiplos filhos, mas cada filho possui apenas um pai.</p>
+
+    <p>O nó no topo da árvore é chamado de <strong>raiz</strong>, e os nós que não possuem filhos são chamados de <strong>folhas</strong>. Entre a raiz e as folhas, podemos ter nós intermediários que ajudam a estruturar a informação.</p>
+
+    <p>Um uso bastante comum de árvores é a <strong>Árvore Binária de Busca (BST)</strong>. Nessa árvore, cada nó possui no máximo dois filhos: <em>esquerda</em> e <em>direita</em>. Além disso, os valores à esquerda de um nó são sempre menores que o valor do nó, e os valores à direita são sempre maiores. Essa regra facilita muito a busca, inserção e remoção de elementos.</p>
+
+    <p>Um exemplo visual de uma árvore binária de busca:</p>
+    <pre>
+        20
+        /  \
+        15    27
+    /  \   /
+    10  18 22
+    </pre>
+    <p>Neste diagrama:</p>
+    <ul>
+        <li><strong>20</strong> é a raiz.</li>
+        <li><strong>10, 18, 22, 27</strong> são folhas ou nós com filhos limitados.</li>
+        <li>À esquerda de cada nó estão valores menores; à direita, valores maiores.</li>
+    </ul>
+
+    <p>Árvores são muito usadas em diversas aplicações do dia a dia, como:</p>
+    <ul>
+        <li>Sistemas de arquivos em computadores (pastas e arquivos formam uma árvore).</li>
+        <li>Organização de dados em bancos de dados.</li>
+        <li>Algoritmos de busca e ordenação.</li>
+        <li>Inteligência artificial e jogos (árvores de decisão).</li>
+    </ul>
+
+    <p>Algumas curiosidades interessantes sobre árvores:</p>
+    <ul>
+        <li>Árvores não precisam ser binárias; podem ter qualquer número de filhos.</li>
+        <li>Árvores balanceadas ajudam a manter operações de busca rápidas, mesmo com muitos elementos.</li>
+        <li>Além da BST, existem árvores especiais como AVL, Red-Black e B-Tree, que garantem desempenho otimizado.</li>
+    </ul>
+
+    <p>Entender árvores é fundamental para organizar dados eficientemente e compreender conceitos avançados de programação, como estruturas de dados, algoritmos e sistemas hierárquicos. Experimentar implementações em código ajuda a fixar melhor o conceito.</p>
+
+    <h2>Percurso</h2>
+    <p>A seguir exemplos de percurso pré Order, in Order e post Order:</p>
+
+
+    <script>
+        function imprimir(key){
+            document.write(key, ' ')
+        }
+        class Node{
+            constructor(key){
+                this.key = key
+                this.left = null
+                this.right = null
+            }
+        }
+
+        class BST{//Bináry Search Tree
+            constructor(){
+                this.root = null
+            }
+
+            insert(key){
+                const newNode = new Node(key)
+
+                if(this.root === null){
+                    this.root = newNode
+                }else{
+                    this.#insertNode(this.root, newNode)
+                }
+            }
+
+            #insertNode(node , newNode){
+                if(newNode.key < node.key){
+                    if(node.left === null){
+                         node.left = newNode
+                    }else{
+                       this.#insertNode(node.left, newNode) 
+                    }
+                }else if(newNode.key > node.key){
+                    if(node.right === null){
+                        node.right = newNode
+                    }else{
+                        this.#insertNode(node.right, newNode)
+                    }
+                }
+            }
+
+            search(key){
+                return this.#searchNode(this.root, key)
+            }
+
+            #searchNode(node, key){
+                if(node === null){
+                    return false
+                }
+                
+                if(key < node.key){
+                    return this.#searchNode(node.left, key)
+                }else if(key > node.key){
+                    return this.#searchNode(node.right, key)
+                }else{
+                    return true
+                }
+            }
+
+            remove(key){
+                this.root = this.#removeNode(this.root, key)
+            }
+            
+            #removeNode(node, key){
+                console.log(node)
+                if(node === null){ //Caso não exista
+                    return null
+                }
+                
+                if(key < node.key){ 
+                    node.left = this.#removeNode(node.left, key)
+                    return node
+                }else if(key > node.key){
+                    node.right = this.#removeNode(node.right, key)
+                    return node
+                }else{
+                    //Caso seja nó folha
+                    if(node.left === null && node.right === null){  
+                        node = null
+                        return node
+                    }
+                    
+                    //Caso tenha um filho
+                    if(node.left === null){
+                        node = node.right
+                        return node
+                    }else if(node.right === null){
+                        node = node.left
+                        return node
+                    }
+
+                    //Caso tenha 2 filhos
+                    const aux = this.#findMinNode(node.right)
+                    node.key = aux.key
+                    node.right = this.#removeNode(node.right, aux.key)
+                    return node
+                }
+            }
+
+            #findMinNode(node){
+                while(node && node.left !== null){
+                    node = node.left
+                }
+                return node
+            }
+            
+            preOrderTraverse(cb){
+                this.#preOrderTraverseNode(this.root, cb)
+            }
+
+            #preOrderTraverseNode(node, cb){
+                if(node !== null && typeof cb === 'function'){
+                    cb(node.key)
+                    this.#preOrderTraverseNode(node.left, cb)
+                    this.#preOrderTraverseNode(node.right, cb)
+                }
+            }
+            
+            inOrderTraverse(cb){
+                this.#inOrderTraverseNode(this.root, cb)
+            }
+
+            #inOrderTraverseNode(node, cb){
+                if(node !== null && typeof cb === 'function'){
+                    this.#inOrderTraverseNode(node.left, cb)
+                    cb(node.key)
+                    this.#inOrderTraverseNode(node.right, cb)
+                }
+            }
+            
+            postOrderTraverse(cb){
+                this.#postOrderTraverseNode(this.root, cb)
+            }
+
+            #postOrderTraverseNode(node, cb){
+                if(node !== null && typeof cb === 'function'){
+                    this.#postOrderTraverseNode(node.left, cb)
+                    this.#postOrderTraverseNode(node.right, cb)
+                    cb(node.key)
+                }
+            }
+        }
+
+        const bst = new BST()
+
+        bst.insert(20)
+        bst.insert(15)
+        bst.insert(18)
+        bst.insert(15)
+        bst.insert(10)
+        
+        console.log('buscando o número 1', bst.search(1))//false
+        console.log('buscando o número 15', bst.search(15))//true
+        
+        console.log('removendo o número 1', bst.remove(1))
+        console.log('removendo o número 10', bst.remove(10))
+        
+        bst.insert(11)
+        bst.insert(27)
+        bst.insert(3)
+        bst.insert(14)
+        bst.insert(22)
+
+        console.log(bst)
+
+        bst.preOrderTraverse(imprimir)
+        document.write('<hr>')
+        bst.inOrderTraverse(imprimir)
+        document.write('<hr>')
+        bst.postOrderTraverse(imprimir)
+    </script>
+</body>
+</html>
