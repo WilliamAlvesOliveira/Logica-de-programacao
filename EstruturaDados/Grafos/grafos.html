@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grafos</title>
+</head>
+<body>
+    <h1>Grafos</h1>
+
+    <p><strong>O que é um grafo?</strong> Um grafo é uma estrutura de dados usada para modelar relações entre coisas. Ele é formado por <em>vértices</em> (ou nós) e <em>arestas</em> (ligações entre vértices). Pense em cidades (vértices) conectadas por estradas (arestas), pessoas conectadas por amizade, páginas da web por links, etc.</p>
+
+    <p><strong>Terminologia essencial</strong>: vértices (nós), arestas (ligações), grau (quantas arestas tocam um vértice), caminho (sequência de vértices conectados), ciclo (caminho que começa e termina no mesmo vértice), componente conectado (subgrafo em que todo mundo alcança todo mundo).</p>
+
+    <p><strong>Tipos de grafos</strong> (classificações comuns):</p>
+    <ul>
+    <li><strong>Não direcionado</strong>: arestas sem sentido (A—B significa A conectado a B e B a A).</li>
+    <li><strong>Direcionado (dígrafo)</strong>: arestas com seta/sentido (A → B não implica B → A).</li>
+    <li><strong>Ponderado</strong>: arestas têm peso/custo/distância (ex.: km, tempo, preço).</li>
+    <li><strong>Não ponderado</strong>: todas as arestas têm custo igual.</li>
+    <li><strong>DAG</strong> (grafo acíclico direcionado): sem ciclos; útil para dependências e ordenação topológica.</li>
+    <li><strong>Árvore</strong>: caso particular de grafo conectado sem ciclos (entre dois nós há exatamente um caminho).</li>
+    </ul>
+
+    <p><strong>Representações clássicas</strong> (como modelar em código e memória):</p>
+    <ul>
+    <li><strong>Lista de adjacência</strong>: para cada vértice, lista de vizinhos. Ótima quando há poucas arestas (grafos esparsos). Espaço ≈ O(V + E).</li>
+    <li><strong>Matriz de adjacência</strong>: tabela V×V indicando ligação/peso. Ótima para consultas de existência de aresta em O(1). Espaço ≈ O(V²).</li>
+    </ul>
+
+    <p><strong>Operações/algoritmos básicos</strong> (independentes da linguagem):</p>
+    <ul>
+    <li><strong>Adicionar/remover vértice/aresta</strong>: afeta a estrutura.</li>
+    <li><strong>Vizinhança</strong>: obter os nós diretamente conectados a um vértice.</li>
+    <li><strong>BFS</strong> (busca em largura): explora por camadas; encontra o caminho mais curto em grafos não ponderados. Tempo ≈ O(V + E).</li>
+    <li><strong>DFS</strong> (busca em profundidade): explora o mais fundo possível; útil para detectar ciclos, componentes, ordenação topológica (em DAG). Tempo ≈ O(V + E).</li>
+    </ul>
+
+    <p><strong>Exemplo visual (não direcionado)</strong>:</p>
+    <pre>
+    A ----- B
+    | \     |
+    |  \    |
+    D --- C  -- E
+    </pre>
+
+    <p><strong>Intuição de BFS vs. DFS</strong>:</p>
+    <ul>
+    <li><strong>BFS</strong>: usa fila (queue). Bom para “qual o menor número de passos?”</li>
+    <li><strong>DFS</strong>: usa pilha (stack) ou recursão. Bom para “há caminho?” e “há ciclo?”</li>
+    </ul>
+
+    <p><strong>Caminho mínimo</strong> (ideia geral):</p>
+    <ul>
+    <li><strong>Sem pesos</strong>: BFS resolve o menor número de arestas.</li>
+    <li><strong>Com pesos não negativos</strong>: Dijkstra encontra o menor custo.</li>
+    <li><strong>Com pesos quaisquer (podem ser negativos)</strong>: Bellman-Ford (detecta ciclos negativos).</li>
+    </ul>
+
+    <p><strong>Complexidade (visão rápida)</strong> usando lista de adjacência:</p>
+    <ul>
+    <li><em>BFS/DFS</em>: tempo O(V + E), espaço O(V).</li>
+    <li><em>Ver se existe aresta (u,v)</em>: O(grau(u)) na lista; O(1) na matriz.</li>
+    </ul>
+
+    <p><strong>Aplicações do mundo real</strong>:</p>
+    <ul>
+    <li><em>Mapas/rotas</em>: encontrar menor caminho (GPS).</li>
+    <li><em>Redes sociais</em>: recomendações de amigos, comunidades.</li>
+    <li><em>Recomendação</em>: produtos/filmes via conexões de usuários/itens.</li>
+    <li><em>Dependências</em>: build de projetos, ordem de tarefas (DAG + ordenação topológica).</li>
+    </ul>
+
+    <p><strong>Armadilhas comuns</strong> (boas práticas):</p>
+    <ul>
+    <li>Evite <em>duplicar arestas</em> sem querer (principalmente em grafos não direcionados).</li>
+    <li>Cuide de <em>vértices inexistentes</em> em operações (retornar lista vazia, não quebrar).</li>
+    <li>Escolha a <em>representação</em> certa: lista (grafos esparsos) vs. matriz (consultas O(1), mas gasta memória).</li>
+    </ul>
+
+    <p><strong>Pseudocódigo agnóstico</strong> (para fixar a ideia, não a sintaxe):</p>
+    <pre>
+    BFS(origem):
+    criar fila Q
+    marcar origem como visitado
+    enfileirar origem em Q
+    enquanto Q não vazia:
+        u = desenfileirar Q
+        para cada v em vizinhos(u):
+        se v não visitado:
+            marcar v
+            enfileirar v
+
+    DFS(origem):
+    marcar origem como visitado
+    para cada v em vizinhos(origem):
+        se v não visitado:
+        DFS(v)
+    </pre>
+
+    <p><strong>Dicas de estudo</strong>:</p>
+    <ul>
+    <li>Entenda <em>conceitos e representações</em> primeiro; depois implemente BFS/DFS.</li>
+    <li>Comece com <em>não ponderado</em> e só depois avance para <em>ponderado</em> (Dijkstra).</li>
+    <li>Pense no <em>problema</em> antes de escolher a estrutura: esparso vs. denso, consulta de aresta rápida vs. economia de memória.</li>
+    </ul>
+
+    <p><strong>Conectando com seu código</strong>: se você usar uma classe <em>Graph</em> com um parâmetro para direção (ex.: <code>isDirectional</code>), consegue modelar tanto grafos direcionados quanto não direcionados de forma simples. <em>Lista de adjacência</em> (objeto/dicionário de arrays) é uma representação prática e portável entre linguagens.</p>
+
+
+    <script>
+
+        class Graph{
+            constructor(isDirectional = false){
+                this.vertices= {}
+                this.isDirectional = isDirectional
+            }
+
+            addVertice(vertice){
+                if(!this.vertices [vertice]){
+                    this.vertices[vertice] = []
+                }
+            }
+
+            removeVertice(vert) {
+                if (!this.vertices[vert]) return;
+                
+                while(this.vertices[vert].length){
+                    const adjacent = this.vertices[vert].pop()
+                    console.log('removendo',adjacent)
+                    this.removeEdge(vert, adjacent)
+                }
+
+                delete this.vertices[vert]
+            }
+
+
+            addEdge(vert1, vert2){
+                if(!this.vertices[vert1] || !this.vertices[vert2]) return
+
+                if (!this.vertices[vert1].includes(vert2)) {
+                    this.vertices[vert1].push(vert2);
+                    if (!this.isDirectional) this.vertices[vert2].push(vert1);
+                }
+            }
+
+            removeEdge(vert1, vert2){
+                const arr = []
+               
+                for(let i = 0; i < this.vertices[vert2].length; i++){
+                    if(this.vertices[vert2][i] !== vert1){
+                        arr.push(this.vertices[vert2][i])
+                    }
+                }
+
+                this.vertices[vert2] = arr
+
+                if(!this.isDirectional){
+                    const arr = []
+
+                    for(let i = 0; i < this.vertices[vert1].length; i++){
+                        if(this.vertices[vert1][i] !== vert2){
+                            arr.push(this.vertices[vert1][i])
+                        }
+                    }
+
+                    this.vertices[vert1] = arr
+                }
+            }
+
+            getNeighbors(vertice){
+                return this.vertices[vertice]
+            }
+
+            display(){
+                for(let vertice in this.vertices){
+                    console.log(vertice + ' -> '+ this.vertices[vertice].join(', '))
+                }
+            }
+        }
+
+        const grafo = new Graph()
+
+        grafo.addVertice('A')
+        grafo.addVertice('B')
+        grafo.addVertice('C')
+        grafo.addVertice('D')
+        grafo.addVertice('E')
+
+        grafo.addEdge('A', 'B')
+        grafo.addEdge('B','A')
+        grafo.addEdge('B', 'C')
+        grafo.addEdge('C', 'B')
+        grafo.addEdge('C','D')
+        grafo.addEdge('D','E')
+        grafo.addEdge('A','D')
+        grafo.addEdge('A','C')
+        grafo.addEdge('E','B')
+
+        grafo.removeVertice('A')
+        grafo.removeEdge('B','E')
+        
+        console.log(grafo.getNeighbors('C'))
+
+        grafo.display()
+        console.log(grafo)
+
+    </script>
+</body>
+</html>
