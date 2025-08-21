@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca Binária</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-left: 4px solid #2c3e50;
+            overflow-x: auto;
+        }
+        .example {
+            margin-top: 20px;
+            padding: 10px;
+            background: #ecf0f1;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Busca Binária</h1>
+
+    <h2>📌 Conceito</h2>
+    <p>
+        A <strong>busca binária</strong> é um algoritmo eficiente para encontrar um elemento em uma lista <strong>ordenada</strong>. 
+        A ideia é dividir a lista pela metade repetidamente:
+    </p>
+    <ul>
+        <li>Se o elemento do meio for o que buscamos → <em>encontramos!</em></li>
+        <li>Se o elemento do meio for maior → buscamos na metade <strong>esquerda</strong>.</li>
+        <li>Se o elemento do meio for menor → buscamos na metade <strong>direita</strong>.</li>
+    </ul>
+    <p>Esse processo continua até acharmos o elemento ou esgotarmos as possibilidades.</p>
+
+    <h2>⚡ Complexidade</h2>
+    <p>
+        A busca binária é muito eficiente: a cada iteração, ela <strong>descarta metade</strong> da lista.  
+        - No pior caso, serão necessários no máximo <code>log₂(n)</code> passos, onde <code>n</code> é o tamanho da lista.  
+    </p>
+    <p><strong>Complexidade:</strong> O(log n)</p>
+
+    <h2>💡 Exemplos de uso</h2>
+    <p>A busca binária é usada em:</p>
+    <ul>
+        <li>Pesquisas em grandes bases de dados (quando os dados estão ordenados).</li>
+        <li>Verificação de existência em listas de palavras ou dicionários.</li>
+        <li>Jogos, por exemplo, para encontrar rapidamente posições ou valores.</li>
+    </ul>
+
+    <h2>🖥️ Implementação em JavaScript</h2>
+    <pre><code>
+        function BinarySearch(list, item){
+            let low = 0
+            let high = list.length - 1
+            let count = 0
+
+            while(low <= high){
+                count++
+                console.log('Número de buscas:', count)
+
+                const mid = parseInt((low + high) / 2)
+                let guess = list[mid]
+                
+                if(guess === item) return mid
+
+                if(guess > item){
+                    high = mid -1
+                }else{
+                    low = mid + 1
+                }
+            }
+            return null
+        }
+
+        function generateOrdenedList(n){
+            const arr = []
+            for (let i = 1; i <= n; i++){
+                arr.push(i)
+            }
+            return arr
+        }
+
+        const arr = generateOrdenedList(100)
+        console.log(BinarySearch(arr, 200)) // null (não existe)
+        console.log(BinarySearch(arr, 27))  // 26 (índice)
+        console.log(BinarySearch(arr, 50))  // 49 (índice)
+    </code></pre>
+
+    <div class="example">
+        <h3>🔍 Teste interativo</h3>
+        <p>Digite um número de 1 a 100 para buscar:</p>
+        <input type="number" id="searchInput" min="1" max="100">
+        <button onclick="searchNumber()">Buscar</button>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        function BinarySearch(list, item){
+            let low = 0
+            let high = list.length - 1
+            let count = 0
+
+            while(low <= high){
+                count++
+                const mid = parseInt((low + high) / 2)
+                let guess = list[mid]
+                
+                if(guess === item) return { index: mid, count }
+
+                if(guess > item){
+                    high = mid -1
+                }else{
+                    low = mid + 1
+                }
+            }
+            return null
+        }
+
+        function generateOrdenedList(n){
+            const arr = []
+            for (let i = 1; i <= n; i++){
+                arr.push(i)
+            }
+            return arr
+        }
+
+        const arr = generateOrdenedList(100)
+
+        function searchNumber(){
+            const value = parseInt(document.getElementById("searchInput").value)
+            const resultElement = document.getElementById("result")
+            const result = BinarySearch(arr, value)
+
+            if(result){
+                resultElement.textContent = `Número encontrado no índice ${result.index} após ${result.count} buscas.`
+            }else{
+                resultElement.textContent = "Número não encontrado na lista."
+            }
+        }
+    </script>
+</body>
+</html>
