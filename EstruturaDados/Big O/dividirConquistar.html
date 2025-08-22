@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dividir para Conquistar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-left: 4px solid #2c3e50;
+            overflow-x: auto;
+        }
+        .example {
+            margin-top: 20px;
+            padding: 10px;
+            background: #ecf0f1;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dividir para Conquistar</h1>
+
+    <h2>📌 Conceito</h2>
+    <p>
+        A estratégia de <strong>Dividir para Conquistar</strong> consiste em resolver um problema quebrando-o em 
+        <strong>subproblemas menores</strong>, resolvendo cada um de forma recursiva e, em seguida, combinando os resultados.
+    </p>
+    <p>
+        Essa técnica é muito usada em algoritmos eficientes, pois permite reduzir problemas complexos a tarefas simples.
+    </p>
+
+    <h2>⚙️ Estrutura</h2>
+    <ol>
+        <li><strong>Dividir:</strong> Quebrar o problema em partes menores.</li>
+        <li><strong>Conquistar:</strong> Resolver os subproblemas (geralmente de forma recursiva).</li>
+        <li><strong>Combinar:</strong> Juntar os resultados em uma solução final.</li>
+    </ol>
+
+    <h2>⚡ Complexidade</h2>
+    <p>
+        A complexidade de algoritmos "Dividir para Conquistar" varia de acordo com como os subproblemas são formados e combinados.  
+        Alguns exemplos clássicos:
+    </p>
+    <ul>
+        <li><strong>Busca Binária:</strong> O(log n)</li>
+        <li><strong>Merge Sort:</strong> O(n log n)</li>
+        <li><strong>Quick Sort:</strong> O(n log n) no caso médio</li>
+    </ul>
+
+    <h2>🖥️ Exemplo em JavaScript</h2>
+    <p>Função que calcula a soma dos quadrados de uma lista usando recursão:</p>
+    <pre><code>
+        function somaQuadrados(arr){
+            const copy = [...arr]   // cria uma cópia para não modificar o original
+            if(copy.length === 0) return 0
+
+            const numero = copy.shift()
+            return numero * numero + somaQuadrados(copy)
+        }
+
+        const numeros = [3,4,1,3,0]
+        console.log("Soma dos quadrados:", somaQuadrados(numeros))
+    </code></pre>
+
+    <div class="example">
+        <h3>🔍 Teste interativo</h3>
+        <p>Digite números separados por vírgula para calcular a soma dos quadrados:</p>
+        <input type="text" id="arrayInput" placeholder="Ex: 3,4,1,3,0">
+        <button onclick="calculateSum()">Calcular</button>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        function somaQuadrados(arr){
+            const copy = [...arr]
+            if(copy.length === 0) return 0
+
+            const numero = copy.shift()
+            return numero * numero + somaQuadrados(copy)
+        }
+
+        function calculateSum(){
+            const input = document.getElementById("arrayInput").value
+            const arr = input.split(",").map(num => parseInt(num.trim())).filter(num => !isNaN(num))
+            const resultElement = document.getElementById("result")
+
+            if(arr.length === 0){
+                resultElement.textContent = "Por favor, insira números válidos."
+                return
+            }
+
+            const result = somaQuadrados(arr)
+            resultElement.textContent = `Soma dos quadrados: ${result}`
+        }
+    </script>
+</body>
+</html>
