@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge Sort</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-left: 4px solid #2c3e50;
+            overflow-x: auto;
+        }
+        .example {
+            margin-top: 20px;
+            padding: 10px;
+            background: #ecf0f1;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Merge Sort</h1>
+
+    <h2>📌 Conceito</h2>
+    <p>
+        O <strong>Merge Sort</strong> é um algoritmo de ordenação baseado na técnica 
+        <em>Dividir para Conquistar</em>. Ele divide a lista em metades, ordena recursivamente 
+        cada parte e depois mescla os resultados em uma lista final ordenada.
+    </p>
+
+    <h2>⚡ Complexidade</h2>
+    <ul>
+        <li><strong>Melhor caso:</strong> O(n log n)</li>
+        <li><strong>Caso médio:</strong> O(n log n)</li>
+        <li><strong>Pior caso:</strong> O(n log n)</li>
+        <li><strong>Espaço:</strong> O(n), por usar arrays temporários</li>
+    </ul>
+
+    <h2>🖥️ Implementação em JavaScript</h2>
+    <pre><code>
+        let comparacoes = 0
+
+        function mergeSort(arr){
+            if(arr.length <= 1) return arr
+
+            const mid = Math.floor(arr.length / 2)
+            const left = arr.slice(0, mid)
+            const right = arr.slice(mid)
+
+            return merge(mergeSort(left), mergeSort(right))
+        }
+
+        function merge(left, right){
+            const result = []
+            let leftIndex = 0
+            let rightIndex = 0
+
+            while(leftIndex < left.length && rightIndex < right.length){
+                comparacoes++
+                if(left[leftIndex] < right[rightIndex]){
+                    result.push(left[leftIndex])
+                    leftIndex++
+                } else {
+                    result.push(right[rightIndex])
+                    rightIndex++
+                }
+            }
+
+            return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex))
+        }
+
+        const arr = [73, 5, 92, 18, 47, 66, 30, 88, 2, 59]
+        comparacoes = 0
+        const sorted = mergeSort(arr)
+        console.log("Array ordenado:", sorted)
+        console.log("Número de comparações:", comparacoes)
+    </code></pre>
+
+    <div class="example">
+        <h3>🔍 Teste interativo</h3>
+        <p>Digite números separados por vírgula para ordenar:</p>
+        <input type="text" id="arrayInput" placeholder="Ex: 73,5,92,18,47">
+        <button onclick="sortArray()">Ordenar</button>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        let comparacoes = 0
+
+        function mergeSort(arr){
+            if(arr.length <= 1) return arr
+
+            const mid = Math.floor(arr.length / 2)
+            const left = arr.slice(0, mid)
+            const right = arr.slice(mid)
+
+            return merge(mergeSort(left), mergeSort(right))
+        }
+
+        function merge(left, right){
+            const result = []
+            let leftIndex = 0
+            let rightIndex = 0
+
+            while(leftIndex < left.length && rightIndex < right.length){
+                comparacoes++
+                if(left[leftIndex] < right[rightIndex]){
+                    result.push(left[leftIndex])
+                    leftIndex++
+                } else {
+                    result.push(right[rightIndex])
+                    rightIndex++
+                }
+            }
+
+            return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex))
+        }
+
+        function sortArray(){
+            const input = document.getElementById("arrayInput").value
+            const arr = input.split(",").map(num => parseInt(num.trim())).filter(num => !isNaN(num))
+            const resultElement = document.getElementById("result")
+
+            if(arr.length === 0){
+                resultElement.textContent = "Por favor, insira números válidos."
+                return
+            }
+
+            comparacoes = 0
+            const sorted = mergeSort(arr)
+            resultElement.textContent = `Array ordenado: [${sorted.join(", ")}] | Comparações: ${comparacoes}`
+        }
+    </script>
+</body>
+</html>
